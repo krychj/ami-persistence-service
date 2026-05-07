@@ -1,0 +1,11 @@
+server:
+  port: 8083
+  
+spring:
+  application:
+    name: ami-persistence-service
+
+  mongodb:
+    uri: mongodb://192.168.196.130:2717/
+    database: agg_meter_data_db
+    autoIndexCreation: true
