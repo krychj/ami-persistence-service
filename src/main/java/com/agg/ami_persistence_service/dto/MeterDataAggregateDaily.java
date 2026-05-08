@@ -1,0 +1,64 @@
+package com.agg.ami_persistence_service.dto;
+
+public class MeterDataAggregateDaily {
+	
+	String id;
+	String servicePointId;
+	int year;
+    int dayOfYear;
+    double totalKWh;
+    int readingCount;
+	
+    public MeterDataAggregateDaily() {
+    	
+    }
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getServicePointId() {
+		return servicePointId;
+	}
+
+	public void setServicePointId(String servicePointId) {
+		this.servicePointId = servicePointId;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public int getDayOfYear() {
+		return dayOfYear;
+	}
+
+	public void setDayOfYear(int dayOfYear) {
+		this.dayOfYear = dayOfYear;
+	}
+
+	public double getTotalKWh() {
+		return totalKWh;
+	}
+
+	public void setTotalKWh(double totalKWh) {
+		this.totalKWh = totalKWh;
+	}
+
+	public int getReadingCount() {
+		return readingCount;
+	}
+
+	public void setReadingCount(int readingCount) {
+		this.readingCount = readingCount;
+	}
+	
+}

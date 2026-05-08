@@ -7,7 +7,7 @@ spring:
       
   cloud:
     function:
-      definition: handleNewMeterData15min
+      definition: handleNewMeterData15min;handleNewMeterData1hour;handleNewMeterData1day
 
     stream:
       kafka:
@@ -22,7 +22,17 @@ spring:
           destination: ami.raw.15min
           group: csu.ami.raw.15min
           consumer:
-            batch-mode: true          
+            batch-mode: true
+        handleNewMeterData1hour-in-0:
+          destination: ami.hourly
+          group: csu.ami.hourly
+          consumer:
+            batch-mode: true
+        handleNewMeterData1day-in-0:
+                  destination: ami.daily
+                  group: csu.ami.daily
+                  consumer:
+                    batch-mode: true
           
   mongodb:
     uri: mongodb://192.168.196.130:2717/

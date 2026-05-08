@@ -1,7 +1,5 @@
 package com.agg.ami_persistence_service.entity;
 
-import java.time.Instant;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,11 +15,14 @@ public class MeterData1hour implements Comparable<MeterData1hour>{
 	String id;
 	
 	String servicePointId;
-    Instant readTimestamp;
-    float kWh;   
+	int year;
+	int dayOfYear;
+	int hourOfDay;
+    float totalKWh;
+    int readingCount;
     
     @Override
 	public int compareTo(MeterData1hour md) {		
-		return Float.compare(kWh, md.getKWh());
+		return Float.compare(totalKWh, md.getTotalKWh());
 	}
 }

@@ -7,7 +7,7 @@ public class MeterData {
 	String id;
 	String servicePointId;
     Instant readTimestamp;
-    float usage_kWh;
+    float kWh;
 	
 	public MeterData() {
 
@@ -33,10 +33,13 @@ public class MeterData {
 	public void setReadTimestamp(Instant readTimestamp) {
 		this.readTimestamp = readTimestamp;
 	}
-	public float getUsage_kWh() {
-		return usage_kWh;
+
+	public float getkWh() {
+		return kWh;
 	}
-	public void setUsage_kWh(float usage_kWh) {
-		this.usage_kWh = usage_kWh;
-	}	
+
+	public void setkWh(float kWh) {
+		this.kWh = kWh;
+	}
+	
 }

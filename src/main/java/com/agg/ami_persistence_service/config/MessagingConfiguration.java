@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
 import com.agg.ami_persistence_service.dto.MeterData;
-
+import com.agg.ami_persistence_service.dto.MeterDataAggregateDaily;
+import com.agg.ami_persistence_service.dto.MeterDataAggregateHourly;
 import com.agg.ami_persistence_service.service.MeterDataService;
 
 @Configuration
@@ -29,6 +30,30 @@ public class MessagingConfiguration {
 			}
 			List<MeterData> readings = message.getPayload();
 			meterDataService.persistMeterData15minBatch(readings);
+		};
+	}
+	
+	// Handles events coming from 'ami.hourly' topic.
+	@Bean
+	public Consumer<Message<List<MeterDataAggregateHourly>>> handleNewMeterData1hour() {
+		return message -> {
+			if (message == null || message.getPayload().isEmpty()) {
+				return;
+			}
+			List<MeterDataAggregateHourly> readings = message.getPayload();
+			meterDataService.persistMeterData1hourBatch(readings);
+		};
+	}
+	
+	// Handles events coming from 'ami.daily' topic.
+	@Bean
+	public Consumer<Message<List<MeterDataAggregateDaily>>> handleNewMeterData1day() {
+		return message -> {
+			if (message == null || message.getPayload().isEmpty()) {
+				return;
+			}
+			List<MeterDataAggregateDaily> readings = message.getPayload();
+			meterDataService.persistMeterData1dayBatch(readings);
 		};
 	}
 }

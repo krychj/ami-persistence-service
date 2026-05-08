@@ -17,6 +17,8 @@ public class MeterData1day implements Comparable<MeterData1day>{
 	String id;
 	
 	String servicePointId;
+	int year;
+    int dayOfYear;
     Instant readTimestamp;
     float kWh;   
     
