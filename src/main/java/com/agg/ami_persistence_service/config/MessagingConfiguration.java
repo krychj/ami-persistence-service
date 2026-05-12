@@ -21,7 +21,7 @@ public class MessagingConfiguration {
 		this.meterDataService = meterDataService;
 	}
 	
-	// Handles events coming from 'ami.raw.15min' topic.
+	// Handles events coming from '[tenantId].ami.raw.15min' topic.
 	@Bean
 	public Consumer<Message<List<MeterData>>> handleNewMeterData15min() {
 		return message -> {
@@ -33,7 +33,7 @@ public class MessagingConfiguration {
 		};
 	}
 	
-	// Handles events coming from 'ami.hourly' topic.
+	// Handles events coming from '[tenantId].ami.hourly' topic.
 	@Bean
 	public Consumer<Message<List<MeterDataAggregateHourly>>> handleNewMeterData1hour() {
 		return message -> {
@@ -45,7 +45,7 @@ public class MessagingConfiguration {
 		};
 	}
 	
-	// Handles events coming from 'ami.daily' topic.
+	// Handles events coming from '[tenantId].ami.daily' topic.
 	@Bean
 	public Consumer<Message<List<MeterDataAggregateDaily>>> handleNewMeterData1day() {
 		return message -> {

@@ -19,20 +19,20 @@ spring:
       
       bindings:
         handleNewMeterData15min-in-0:
-          destination: ami.raw.15min
-          group: csu.ami.raw.15min
+          destination: csu-utility.ami.raw.15min
+          group: csu-utility.ami.raw.15min
           consumer:
             batch-mode: true
         handleNewMeterData1hour-in-0:
-          destination: ami.hourly
-          group: csu.ami.hourly
+          destination: csu-utility.ami.hourly
+          group: csu-utility.ami.hourly
           consumer:
             batch-mode: true
         handleNewMeterData1day-in-0:
-                  destination: ami.daily
-                  group: csu.ami.daily
-                  consumer:
-                    batch-mode: true
+          destination: csu-utility.ami.daily
+          group: csu-utility.ami.daily
+          consumer:
+            batch-mode: true
           
   mongodb:
     uri: mongodb://192.168.196.130:2717/
