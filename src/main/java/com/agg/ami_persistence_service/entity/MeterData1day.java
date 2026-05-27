@@ -20,10 +20,11 @@ public class MeterData1day implements Comparable<MeterData1day>{
 	int year;
     int dayOfYear;
     Instant readTimestamp;
-    float kWh;   
+    float totalKWh;
+    int countOfReads;
     
     @Override
 	public int compareTo(MeterData1day md) {		
-		return Float.compare(kWh, md.getKWh());
+		return Float.compare(totalKWh, md.getTotalKWh());
 	}
 }

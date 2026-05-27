@@ -19,7 +19,7 @@ public class MeterData1hour implements Comparable<MeterData1hour>{
 	int dayOfYear;
 	int hourOfDay;
     float totalKWh;
-    int readingCount;
+    int countOfReads;
     
     @Override
 	public int compareTo(MeterData1hour md) {		

@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -23,7 +22,6 @@ public class MeterDataService {
 
 	MongoTemplate mongoTemplate;;
 	
-	@Autowired
 	public MeterDataService(MongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
 	}
@@ -60,7 +58,7 @@ public class MeterDataService {
 	        update.set("dayOfYear", md.getDayOfYear());
 	        update.set("hourOfDay", md.getHourOfDay());
 	        update.set("totalKWh", md.getTotalKWh());
-	        update.set("readingCount", md.getReadingCount());
+	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
 	    bulkOps.execute();
@@ -77,7 +75,7 @@ public class MeterDataService {
 	        update.set("year", md.getYear());
 	        update.set("dayOfYear", md.getDayOfYear());
 	        update.set("totalKWh", md.getTotalKWh());
-	        update.set("readingCount", md.getReadingCount());
+	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
 	    bulkOps.execute();

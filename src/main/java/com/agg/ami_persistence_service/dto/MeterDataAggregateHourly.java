@@ -8,7 +8,7 @@ public class MeterDataAggregateHourly {
     int dayOfYear;
     int hourOfDay;
     double totalKWh;
-    int readingCount;
+    int countOfReads;
 	
     public MeterDataAggregateHourly() {
     	
@@ -62,14 +62,11 @@ public class MeterDataAggregateHourly {
 		this.totalKWh = totalKWh;
 	}
 
-	public int getReadingCount() {
-		return readingCount;
+	public int getCountOfReads() {
+		return countOfReads;
 	}
 
-	public void setReadingCount(int readingCount) {
-		this.readingCount = readingCount;
+	public void setCountOfReads(int countOfReads) {
+		this.countOfReads = countOfReads;
 	}
-    
-    
-	
 }
