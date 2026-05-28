@@ -1,5 +1,8 @@
 package com.agg.ami_persistence_service.dto;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "meter_data_1hour")
 public class MeterDataAggregateHourly {
 	
 	String id;
