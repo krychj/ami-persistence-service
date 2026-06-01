@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 
 import com.agg.ami_persistence_service.dto.MeterData;
-import com.agg.ami_persistence_service.dto.MeterDataAggregateDaily;
-import com.agg.ami_persistence_service.dto.MeterDataAggregateHourly;
+import com.agg.ami_persistence_service.dto.MeterDataDailyAggregate;
+import com.agg.ami_persistence_service.dto.MeterDataHourlyAggregate;
 import com.agg.ami_persistence_service.service.MeterDataService;
 
 @Configuration
@@ -35,24 +35,24 @@ public class MessagingConfiguration {
 	
 	// Handles events coming from '[tenantId].ami.hourly' topic.
 	@Bean
-	public Consumer<Message<List<MeterDataAggregateHourly>>> handleNewMeterData1hour() {
+	public Consumer<Message<List<MeterDataHourlyAggregate>>> handleNewMeterData1hour() {
 		return message -> {
 			if (message == null || message.getPayload().isEmpty()) {
 				return;
 			}
-			List<MeterDataAggregateHourly> readings = message.getPayload();
+			List<MeterDataHourlyAggregate> readings = message.getPayload();
 			meterDataService.persistMeterData1hourBatch(readings);
 		};
 	}
 	
 	// Handles events coming from '[tenantId].ami.daily' topic.
 	@Bean
-	public Consumer<Message<List<MeterDataAggregateDaily>>> handleNewMeterData1day() {
+	public Consumer<Message<List<MeterDataDailyAggregate>>> handleNewMeterData1day() {
 		return message -> {
 			if (message == null || message.getPayload().isEmpty()) {
 				return;
 			}
-			List<MeterDataAggregateDaily> readings = message.getPayload();
+			List<MeterDataDailyAggregate> readings = message.getPayload();
 			meterDataService.persistMeterData1dayBatch(readings);
 		};
 	}

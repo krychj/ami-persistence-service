@@ -13,9 +13,8 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.agg.ami_persistence_service.dto.MeterData;
-import com.agg.ami_persistence_service.dto.MeterDataAggregateDaily;
-import com.agg.ami_persistence_service.dto.MeterDataAggregateHourly;
-import com.agg.ami_persistence_service.entity.MeterData15min;
+import com.agg.ami_persistence_service.dto.MeterDataDailyAggregate;
+import com.agg.ami_persistence_service.dto.MeterDataHourlyAggregate;
 
 @Service
 public class MeterDataService {
@@ -28,14 +27,14 @@ public class MeterDataService {
 	
 	public void persistMeterData15minBatch(List<MeterData> readings) {
 
-	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterData15min.class);
+	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterData.class);
 
 	    readings.forEach(md -> {	    	
 	    	Query query = Query.query(Criteria.where("id").is(md.getId() + "|" + getIntervalSlot(md.getReadTimestamp())));	        
 	        Update update = new Update();
 	        update.set("servicePointId", md.getServicePointId());
 	        update.set("readTimestamp", md.getReadTimestamp());
-	        update.set("kWh", md.getkWh());
+	        update.set("consumptionKwh", md.getConsumptionKwh());
 	        bulkOps.upsert(query, update);
 	    });
 	    bulkOps.execute();
@@ -46,9 +45,9 @@ public class MeterDataService {
         return timestamp.atZone(ZoneOffset.UTC).getMinute() / 15;
     }
 	
-	public void persistMeterData1hourBatch(List<MeterDataAggregateHourly> readings) {
+	public void persistMeterData1hourBatch(List<MeterDataHourlyAggregate> readings) {
 
-	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataAggregateHourly.class);
+	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataHourlyAggregate.class);
 
 	    readings.forEach(md -> {	    	
 	    	Query query = Query.query(Criteria.where("id").is(md.getId() + "|" + md.getHourOfDay()));	        
@@ -57,16 +56,16 @@ public class MeterDataService {
 	        update.set("year", md.getYear());
 	        update.set("dayOfYear", md.getDayOfYear());
 	        update.set("hourOfDay", md.getHourOfDay());
-	        update.set("totalKWh", md.getTotalKWh());
+	        update.set("consumptionKwh", md.getConsumptionKwh());
 	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
 	    bulkOps.execute();
 	}
 	
-	public void persistMeterData1dayBatch(List<MeterDataAggregateDaily> readings) {
+	public void persistMeterData1dayBatch(List<MeterDataDailyAggregate> readings) {
 
-	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataAggregateDaily.class);
+	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataDailyAggregate.class);
 
 	    readings.forEach(md -> {	    	
 	    	Query query = Query.query(Criteria.where("id").is(md.getId()));	        
@@ -74,7 +73,7 @@ public class MeterDataService {
 	        update.set("servicePointId", md.getServicePointId());
 	        update.set("year", md.getYear());
 	        update.set("dayOfYear", md.getDayOfYear());
-	        update.set("totalKWh", md.getTotalKWh());
+	        update.set("consumptionKwh", md.getConsumptionKwh());
 	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
