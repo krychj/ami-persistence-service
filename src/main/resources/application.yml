@@ -28,6 +28,9 @@ spring:
           group: csu-utility.ami.hourly
           consumer:
             batch-mode: true
+        evAnalysisTriggers-in-0:
+          destination: csu-utility.ami.hourly
+          group: csu-utility.ev-analysis-triggers
         handleNewMeterData1day-in-0:
           destination: csu-utility.ami.daily
           group: csu-utility.ami.daily
@@ -38,3 +41,6 @@ spring:
     uri: mongodb://192.168.196.130:2717/
     database: agg_meter_data_db
     autoIndexCreation: true
+
+tenant.id: csu-utility
+ev.analysis.frequency.days: 10

@@ -11,6 +11,9 @@ public class AppConfig {
 	
 	@Value("${tenant.id:single-tenant}")
     public String tenantId;
+	
+	@Value("${ev.analysis.frequency.days:10}")
+    public String evAnalysisFrequencyDays;
 
 	public String getApplicationName() {
 		return applicationName;
@@ -28,6 +31,11 @@ public class AppConfig {
 		this.tenantId = tenantId;
 	}
 
-	
-	
+	public int getEvAnalysisFrequencyDays() {
+		return Integer.valueOf(evAnalysisFrequencyDays);
+	}
+
+	public void setEvAnalysisFrequencyDays(String evAnalysisFrequencyDays) {
+		this.evAnalysisFrequencyDays = evAnalysisFrequencyDays;
+	}	
 }

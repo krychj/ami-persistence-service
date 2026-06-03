@@ -42,6 +42,11 @@ public class MessagingConfiguration {
 			}
 			List<MeterDataHourlyAggregate> readings = message.getPayload();
 			meterDataService.persistMeterData1hourBatch(readings);
+			//TODO fire event to trigger EV signature detection
+			//Conditional on analysisType: full detection, monitoring and evState: unknown, candidate, confirmed EV
+			//For Unknown: run every time new data arrives
+			//For Candidate: run every time new data arrives;
+			//For Confirmed EVs, run every n-days
 		};
 	}
 	
