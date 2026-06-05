@@ -15,7 +15,7 @@ spring:
           brokers: 192.168.196.130:9092          
           autoCreateTopics: true
           minPartitionCount: 2
-          replicationFactor: 1
+          replicationFactor: 1        
       
       bindings:
         handleNewMeterData15min-in-0:
@@ -38,3 +38,6 @@ spring:
     uri: mongodb://192.168.196.130:2717/
     database: agg_meter_data_db
     autoIndexCreation: true
+
+tenant.id: csu-utility
+ev.analysis.frequency.days: 10
