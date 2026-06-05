@@ -6,9 +6,9 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
 
-import com.agg.ami_persistence_service.dto.EvAnalysisStatus;
+import com.agg.ami_persistence_service.dto.EvStatus;
 
-public class EvAnalysisStatusSerde implements Serde<EvAnalysisStatus> {
+public class EvAnalysisStatusSerde implements Serde<EvStatus> {
 	EvAnalysisStatusSerializer serializer = new EvAnalysisStatusSerializer();
 	EvAnalysisStatusDeserializer deserializer = new EvAnalysisStatusDeserializer();
 	
@@ -19,12 +19,12 @@ public class EvAnalysisStatusSerde implements Serde<EvAnalysisStatus> {
     }
 	
 	@Override
-	public Serializer<EvAnalysisStatus> serializer() {		
+	public Serializer<EvStatus> serializer() {		
 		return serializer;
 	}
 
 	@Override
-	public Deserializer<EvAnalysisStatus> deserializer() {		
+	public Deserializer<EvStatus> deserializer() {		
 		return deserializer;
 	}
 }

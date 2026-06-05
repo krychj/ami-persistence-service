@@ -15,7 +15,7 @@ spring:
           brokers: 192.168.196.130:9092          
           autoCreateTopics: true
           minPartitionCount: 2
-          replicationFactor: 1
+          replicationFactor: 1        
       
       bindings:
         handleNewMeterData15min-in-0:
@@ -28,9 +28,6 @@ spring:
           group: csu-utility.ami.hourly
           consumer:
             batch-mode: true
-        evAnalysisTriggers-in-0:
-          destination: csu-utility.ami.hourly
-          group: csu-utility.ev-analysis-triggers
         handleNewMeterData1day-in-0:
           destination: csu-utility.ami.daily
           group: csu-utility.ami.daily

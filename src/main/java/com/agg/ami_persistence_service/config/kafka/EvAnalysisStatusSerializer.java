@@ -3,17 +3,17 @@ package com.agg.ami_persistence_service.config.kafka;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 
-import com.agg.ami_persistence_service.dto.EvAnalysisStatus;
+import com.agg.ami_persistence_service.dto.EvStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class EvAnalysisStatusSerializer implements Serializer<EvAnalysisStatus> {
+public class EvAnalysisStatusSerializer implements Serializer<EvStatus> {
 	
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	
 	@Override
-	public byte[] serialize(String topic, EvAnalysisStatus data) {
+	public byte[] serialize(String topic, EvStatus data) {
 		objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		try {

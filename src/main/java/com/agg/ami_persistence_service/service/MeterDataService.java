@@ -4,25 +4,44 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
 
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeTypeUtils;
 
+import com.agg.ami_persistence_service.dto.EvAnalysisRequest;
+import com.agg.ami_persistence_service.dto.EvStatus;
 import com.agg.ami_persistence_service.dto.MeterData;
 import com.agg.ami_persistence_service.dto.MeterDataDailyAggregate;
 import com.agg.ami_persistence_service.dto.MeterDataHourlyAggregate;
+import com.mongodb.bulk.BulkWriteResult;
 
 @Service
 public class MeterDataService {
 
-	MongoTemplate mongoTemplate;;
+	MongoTemplate mongoTemplate;
+	StreamsBuilderFactoryBean factoryBean;
+	StreamBridge streamBridge;
 	
-	public MeterDataService(MongoTemplate mongoTemplate) {
+	public MeterDataService(MongoTemplate mongoTemplate, StreamsBuilderFactoryBean factoryBean,
+			StreamBridge streamBridge) {
+		
 		this.mongoTemplate = mongoTemplate;
+		this.factoryBean = factoryBean;
+		this.streamBridge = streamBridge;
 	}
 	
 	public void persistMeterData15minBatch(List<MeterData> readings) {
@@ -45,13 +64,13 @@ public class MeterDataService {
         return timestamp.atZone(ZoneOffset.UTC).getMinute() / 15;
     }
 	
-	public void persistMeterData1hourBatch(List<MeterDataHourlyAggregate> readings) {
+	public int persistMeterData1hourBatch(List<MeterDataHourlyAggregate> readings) {
 
 	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataHourlyAggregate.class);
 
 	    readings.forEach(md -> {	    	
 	    	Query query = Query.query(Criteria.where("id").is(md.getId() + "|" + md.getHourOfDay()));	        
-	        Update update = new Update();
+	        Update update = new Update();	        
 	        update.set("servicePointId", md.getServicePointId());
 	        update.set("year", md.getYear());
 	        update.set("dayOfYear", md.getDayOfYear());
@@ -60,7 +79,10 @@ public class MeterDataService {
 	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
-	    bulkOps.execute();
+	    BulkWriteResult result = bulkOps.execute();
+	    int newDocs = result.getUpserts().size();
+	    int modifiedDocs = result.getModifiedCount();
+	    return newDocs + modifiedDocs;
 	}
 	
 	public void persistMeterData1dayBatch(List<MeterDataDailyAggregate> readings) {
@@ -78,5 +100,27 @@ public class MeterDataService {
 	        bulkOps.upsert(query, update);
 	    });
 	    bulkOps.execute();
+	}
+	
+	public EvStatus getEvStatus(String tenantId, String servicePointId) {
+		KafkaStreams kafkaStreams =  factoryBean.getKafkaStreams();
+		String stateStoreEvStatus = tenantId + ".ev-status-store";
+		ReadOnlyKeyValueStore<String, EvStatus> store = 
+				kafkaStreams.store(StoreQueryParameters.fromNameAndType(stateStoreEvStatus, QueryableStoreTypes.keyValueStore()));
+		EvStatus evStatus = store.get(servicePointId);
+		return evStatus;
+	}
+	
+	public void publishEvAnalysisRequest(String tenantId, String servicePointId, Instant requestTime) {		
+		byte[] messageKeyByteArray = servicePointId.getBytes();
+		EvAnalysisRequest request = EvAnalysisRequest.builder()
+				.servicePointId(servicePointId)
+				.requestTime(requestTime)
+				.build();
+		Message<EvAnalysisRequest> message = MessageBuilder.withPayload(request)
+				.setHeader(KafkaHeaders.KEY, messageKeyByteArray)					
+				.build();
+		String topic = tenantId + ".ev-analysis-requests";
+		streamBridge.send(topic, message, MimeTypeUtils.APPLICATION_JSON);
 	}
 }

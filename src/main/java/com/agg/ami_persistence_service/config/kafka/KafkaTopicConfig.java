@@ -15,7 +15,7 @@ public class KafkaTopicConfig {
 	public KafkaTopicConfig(@Value("${spring.cloud.stream.kafka.binder.brokers}") String brokers,
 			@Value("${tenant.id}") String tenantId) {
 		
-		String inputTopic = tenantId + ".ev-analysis-result";		
+		String inputTopic1 = tenantId + ".ev-analysis-requests";		
 		String bootstrapAddress = brokers;
 		
 		
@@ -25,7 +25,11 @@ public class KafkaTopicConfig {
 
     	Integer partitionNumber = 2;
 		
-    	NewTopic newTopic1 = new NewTopic(inputTopic, partitionNumber, (short) 1);    	
-        adminClient.createTopics(Collections.singletonList(newTopic1));        
+    	NewTopic newTopic1 = new NewTopic(inputTopic1, partitionNumber, (short) 1);    	
+        adminClient.createTopics(Collections.singletonList(newTopic1));
+        
+        String inputTopic2 = tenantId + ".ev-analysis-result";
+        NewTopic newTopic2 = new NewTopic(inputTopic2, partitionNumber, (short) 1);    	
+        adminClient.createTopics(Collections.singletonList(newTopic2));
 	}
 }
