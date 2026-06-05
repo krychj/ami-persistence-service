@@ -28,7 +28,7 @@ public class KafkaTopicConfig {
     	NewTopic newTopic1 = new NewTopic(inputTopic1, partitionNumber, (short) 1);    	
         adminClient.createTopics(Collections.singletonList(newTopic1));
         
-        String inputTopic2 = tenantId + ".ev-analysis-result";
+        String inputTopic2 = tenantId + ".ev-analysis-results";
         NewTopic newTopic2 = new NewTopic(inputTopic2, partitionNumber, (short) 1);    	
         adminClient.createTopics(Collections.singletonList(newTopic2));
 	}

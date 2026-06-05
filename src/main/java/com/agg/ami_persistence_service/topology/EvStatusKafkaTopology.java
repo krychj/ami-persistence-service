@@ -25,7 +25,7 @@ public class EvStatusKafkaTopology {
 	@Autowired
 	public Topology createTopology(StreamsBuilder builder) {
 		String tenantId = appConfig.getTenantId();
-		String inputTopic1 = tenantId + ".ev-analysis-result";
+		String inputTopic1 = tenantId + ".ev-analysis-results";
 		String outputTopic1 = tenantId + ".ev-status-store";
 		builder
 		    .table(inputTopic1,

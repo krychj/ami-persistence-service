@@ -64,7 +64,7 @@ public class MeterDataService {
         return timestamp.atZone(ZoneOffset.UTC).getMinute() / 15;
     }
 	
-	public int persistMeterData1hourBatch(List<MeterDataHourlyAggregate> readings) {
+	public void persistMeterData1hourBatch(List<MeterDataHourlyAggregate> readings) {
 
 	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataHourlyAggregate.class);
 
@@ -79,13 +79,10 @@ public class MeterDataService {
 	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
-	    BulkWriteResult result = bulkOps.execute();
-	    int newDocs = result.getUpserts().size();
-	    int modifiedDocs = result.getModifiedCount();
-	    return newDocs + modifiedDocs;
+	    bulkOps.execute();
 	}
 	
-	public void persistMeterData1dayBatch(List<MeterDataDailyAggregate> readings) {
+	public int persistMeterData1dayBatch(List<MeterDataDailyAggregate> readings) {
 
 	    BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MeterDataDailyAggregate.class);
 
@@ -99,7 +96,10 @@ public class MeterDataService {
 	        update.set("countOfReads", md.getCountOfReads());
 	        bulkOps.upsert(query, update);
 	    });
-	    bulkOps.execute();
+	    BulkWriteResult result = bulkOps.execute();
+	    int newDocs = result.getUpserts().size();
+	    int modifiedDocs = result.getModifiedCount();
+	    return newDocs + modifiedDocs;
 	}
 	
 	public EvStatus getEvStatus(String tenantId, String servicePointId) {
