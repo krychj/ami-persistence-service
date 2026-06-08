@@ -12,17 +12,27 @@ import com.agg.ami_persistence_service.dto.EvStatus;
 import com.agg.ami_persistence_service.dto.MeterData;
 import com.agg.ami_persistence_service.dto.MeterDataDailyAggregate;
 import com.agg.ami_persistence_service.dto.MeterDataHourlyAggregate;
+import com.agg.ami_persistence_service.dto.SpEvAssessment;
 import com.agg.ami_persistence_service.service.MeterDataService;
+import com.agg.ami_persistence_service.service.ServicePointTransformerMappingService;
+import com.agg.ami_persistence_service.service.SpEvAssessmentService;
 
 @Configuration
 public class MessagingConfiguration {
 
 	MeterDataService meterDataService;
 	AppConfig appConfig;
+	ServicePointTransformerMappingService servicePointTransformerMappingService;
+	SpEvAssessmentService spEvAssessmentService;
 	
-	public MessagingConfiguration(MeterDataService meterDataService, AppConfig appConfig) {
+	public MessagingConfiguration(MeterDataService meterDataService, AppConfig appConfig,
+			ServicePointTransformerMappingService servicePointTransformerMappingService,
+			SpEvAssessmentService spEvAssessmentService) {
+		
 		this.meterDataService = meterDataService;
 		this.appConfig = appConfig;
+		this.servicePointTransformerMappingService = servicePointTransformerMappingService;
+		this.spEvAssessmentService = spEvAssessmentService;
 	}
 	
 	// Handles events coming from '[tenantId].ami.raw.15min' topic.
@@ -69,6 +79,24 @@ public class MessagingConfiguration {
 					}
 				}				
 			}
+		};
+	}
+	
+	// Handles events coming from '[tenantId].ev-analysis-results' topic.
+	@Bean
+	Consumer<Message<List<EvStatus>>> handleNewEvAnalysisResults() {
+		return message -> {
+			if (message == null || message.getPayload().isEmpty()) {
+				return;
+			}
+			List<EvStatus> evStatusEvents = message.getPayload();
+			List<SpEvAssessment> assessments = evStatusEvents.stream()
+				.map(evStatus -> SpEvAssessment.builder()
+					.spId(evStatus.getServicePointId())
+					.evState(evStatus.getEvState())
+					.transformerId(servicePointTransformerMappingService.getTransformerId(evStatus.getServicePointId()).get())
+					.build()).toList();
+			spEvAssessmentService.save(assessments);
 		};
 	}
 }

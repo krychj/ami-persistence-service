@@ -8,6 +8,5 @@ public class AmiPersistenceServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AmiPersistenceServiceApplication.class, args);
-	}
-
+	}	
 }

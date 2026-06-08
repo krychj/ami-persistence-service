@@ -2,8 +2,10 @@ package com.agg.ami_persistence_service.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
+@EnableScheduling
 public class AppConfig {
 
 	@Value("${spring.application.name:ami-aggregation-service}")

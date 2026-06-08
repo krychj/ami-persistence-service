@@ -7,7 +7,7 @@ spring:
       
   cloud:
     function:
-      definition: handleNewMeterData15min;handleNewMeterData1hour;handleNewMeterData1day
+      definition: handleNewMeterData15min;handleNewMeterData1hour;handleNewMeterData1day;handleNewEvAnalysisResults
 
     stream:
       kafka:
@@ -31,6 +31,11 @@ spring:
         handleNewMeterData1day-in-0:
           destination: csu-utility.ami.daily
           group: csu-utility.ami.daily
+          consumer:
+            batch-mode: true
+        handleNewEvAnalysisResults-in-0:
+          destination: csu-utility.ev-analysis-results
+          group: csu-utility.ev-analysis-results
           consumer:
             batch-mode: true
           
