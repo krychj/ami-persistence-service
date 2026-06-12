@@ -19,9 +19,12 @@ public class EvStatus {
 	
 	public boolean needsUpdate(AppConfig appConfig) {		
 	    Instant now = Instant.now();	    
-	    if(evState == EV_STATE.CONFIRMED_EV && nextFullAnalysisAt != null && nextFullAnalysisAt.isBefore(now)) {
+	    /*if(evState == EV_STATE.CONFIRMED_EV && nextFullAnalysisAt != null && nextFullAnalysisAt.isBefore(now)) {
 	    		return false;
-	    }	    
+	    }*/
+	    if(evState == EV_STATE.CONFIRMED_EV) {
+    		return false;
+	    }
 	    return true;
 	}
 }

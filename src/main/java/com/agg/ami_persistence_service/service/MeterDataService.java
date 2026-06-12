@@ -2,10 +2,14 @@ package com.agg.ami_persistence_service.service;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -25,6 +29,7 @@ import org.springframework.util.MimeTypeUtils;
 import com.agg.ami_persistence_service.dto.EvAnalysisRequest;
 import com.agg.ami_persistence_service.dto.EvStatus;
 import com.agg.ami_persistence_service.dto.MeterData;
+import com.agg.ami_persistence_service.dto.MeterDataAvailableDaysAggregate;
 import com.agg.ami_persistence_service.dto.MeterDataDailyAggregate;
 import com.agg.ami_persistence_service.dto.MeterDataHourlyAggregate;
 import com.mongodb.bulk.BulkWriteResult;
@@ -111,6 +116,29 @@ public class MeterDataService {
 		return evStatus;
 	}
 	
+	public List<EvStatus> getAllEvStatuses(String tenantId) {
+		KafkaStreams kafkaStreams =  factoryBean.getKafkaStreams();
+		String stateStoreEvStatus = tenantId + ".ev-status-store";
+		ReadOnlyKeyValueStore<String, EvStatus> store = 
+				kafkaStreams.store(StoreQueryParameters.fromNameAndType(stateStoreEvStatus, QueryableStoreTypes.keyValueStore()));
+		KeyValueIterator<String, EvStatus> evStatuses = store.all();
+		List<EvStatus> all = new ArrayList<>();
+		evStatuses.forEachRemaining(status -> {
+			all.add(status.value);
+		});
+		return all;
+	}
+	
+	public Integer getNumberOfAvailableDaysForSpId(String tenantId, String servicePointId) {
+		KafkaStreams kafkaStreams =  factoryBean.getKafkaStreams();
+		String stateStoreEvStatus = tenantId + ".available.days-store";
+		ReadOnlyKeyValueStore<String, MeterDataAvailableDaysAggregate> store = 
+				kafkaStreams.store(StoreQueryParameters.fromNameAndType(stateStoreEvStatus, QueryableStoreTypes.keyValueStore()));
+		MeterDataAvailableDaysAggregate availableDays = store.get(servicePointId);
+		Integer numOfDaysAvailable = availableDays != null ? store.get(servicePointId).getAvailableDays() : 0;
+		return numOfDaysAvailable;
+	}
+	
 	public void publishEvAnalysisRequest(String tenantId, String servicePointId, Instant requestTime) {		
 		byte[] messageKeyByteArray = servicePointId.getBytes();
 		EvAnalysisRequest request = EvAnalysisRequest.builder()
@@ -123,4 +151,15 @@ public class MeterDataService {
 		String topic = tenantId + ".ev-analysis-requests";
 		streamBridge.send(topic, message, MimeTypeUtils.APPLICATION_JSON);
 	}
+	
+	public List<String> getAllServicePointIds() {
+        Query query = new Query();
+        query.fields().include("servicePointId");
+
+        return mongoTemplate.findAll(MeterDataDailyAggregate.class)
+                .stream()
+                .map(MeterDataDailyAggregate::getServicePointId)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

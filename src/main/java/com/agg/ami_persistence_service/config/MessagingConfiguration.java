@@ -67,20 +67,9 @@ public class MessagingConfiguration {
 				return;
 			}
 			List<MeterDataDailyAggregate> readings = message.getPayload();
-			int result = meterDataService.persistMeterData1dayBatch(readings);
-			String tenantId = appConfig.getTenantId();
-			if(result > 0) {
-				Instant requestTime = Instant.now();
-				for(MeterDataDailyAggregate dailyAggregate : readings) {
-					String spId = dailyAggregate.getServicePointId();
-					EvStatus evStatus = meterDataService.getEvStatus(tenantId, spId);
-					if (evStatus == null || evStatus.needsUpdate(appConfig)) {
-						meterDataService.publishEvAnalysisRequest(tenantId, spId, requestTime);
-					}
-				}				
-			}
+			meterDataService.persistMeterData1dayBatch(readings);			
 		};
-	}
+	}	
 	
 	// Handles events coming from '[tenantId].ev-analysis-results' topic.
 	@Bean
